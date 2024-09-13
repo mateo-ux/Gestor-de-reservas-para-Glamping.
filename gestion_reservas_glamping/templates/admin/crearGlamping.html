@@ -1,0 +1,15 @@
+{% extends "layout/base.html" %}
+{% block title %}Crear tarea{% endblock title %}
+
+{% block content %}
+  <div class="card bg-primary text-primary-content w-96">
+    <div class="card-body">
+      <form action="{%url 'protected' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form}}
+        <button type="submit" class="btn btn-outline btn-success">Crear</button>
+      </form>       
+      </div>
+    </div>
+  </div>
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "layout/base.html" %}
+{% block title %}Crear tarea{% endblock title %}
+
+{% block content %}
+  <div class="card bg-primary text-primary-content w-96">
+    <div class="card-body">
+      <form action="{% url 'glamping_actualizar' glamping.id %}" method="post" >
+        {% csrf_token %}
+        {{form}}
+        <button type="submit" class="btn btn-outline btn-success">Actualizar</button>
+      </form>       
+      </div>
+    </div>
+  </div>
+{% endblock content %}

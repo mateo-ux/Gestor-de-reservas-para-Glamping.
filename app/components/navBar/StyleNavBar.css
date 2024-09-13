@@ -1,0 +1,23 @@
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+  }
+  
+  @keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: oklch(var(--bc)); }
+  }
+  
+  .typing-animation #typing-text {
+    display: inline-block;
+    overflow: hidden;
+    border-right: 0.01em solid oklch(var(--bc)); /* Efecto de cursor */
+    animation: 
+      typing 3s steps(30, end) forwards, /* Duración y velocidad de la animación */
+      blink-caret 0.8s step-end infinite; /* Efecto de parpadeo del cursor */
+  }
+
+
+
+  
+  
