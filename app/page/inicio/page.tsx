@@ -1,3 +1,5 @@
+
+import ReservationCalendar from '@/app/components/calendario/ReservationCalendar';
 import CardTipo1 from '@/app/components/cards/CardTipo1';
 import React from 'react';
 
@@ -5,6 +7,7 @@ interface Glamping {
   id: number;
   nombre: string;
   descripcion: string;
+  ubicacion: string;
   imagen1?: string;
   imagen2?: string;
   imagen3?: string;
@@ -22,9 +25,12 @@ const Page = async () => {
   const data: Glamping[] = await res.json();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 container mx-6 px-4">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-8 text-center">Lista de Glampings</h1>
-      <div className="flex flex-col items-center w-full max-w-full space-y-8">
+    <>
+    <div className="flex flex-col items-center justify-center w-full max-w-screen-lg mx-auto my-auto">
+      <div className="min-h-screen items-center justify-center">
+      <ReservationCalendar />
+    </div>
+      <div className="flex flex-col items-center w-full max-w-full space-y-8 -mt-32">
         {data.map((glamping, index) => {
           const imagenes: string[] = [
             glamping.imagen1,
@@ -35,23 +41,22 @@ const Page = async () => {
             glamping.imagen6,
           ].filter((img): img is string => img !== undefined && img !== null);
 
-          const alignment = index % 2 === 0 ? '-translate-x-8 sm:-translate-x-16 md:-translate-x-24' : 'translate-x-8 sm:translate-x-16 md:translate-x-24'; 
+          const alignment = index % 2 === 0 ? '-translate-x-8 sm:-translate-x-16 md:-translate-x-24' : 'translate-x-8 sm:translate-x-16 md:translate-x-24';
 
           return (
             <div
               key={glamping.id}
-              className={`transform ${alignment} w-full sm:w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 mx-auto`}
+              className={`transform ${alignment} w-full sm:w-11/12 lg:w-3/4 xl:w-full `}
             >
               <CardTipo1
                 titulo={glamping.nombre}
                 contenido={glamping.descripcion}
-                imagenes={imagenes.length > 0 ? imagenes : ['/images/default-image.png']}
-              />
+                imagenes={imagenes.length > 0 ? imagenes : ['/images/default-image.png']} />
             </div>
           );
         })}
       </div>
-    </div>
+    </div></>
   );
 };
 

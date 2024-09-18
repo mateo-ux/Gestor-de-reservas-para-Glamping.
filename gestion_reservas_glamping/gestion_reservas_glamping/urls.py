@@ -27,6 +27,8 @@ urlpatterns = [
     path('protected/<int:glamping_id>/',views.glamping_actualizar,name ='glamping_actualizar'),
     path('protected/eliminar/<int:glamping_id>',views.glamping_eliminar,name = 'glamping_eliminar'),
     path('api/glamping/', views.GlampingList.as_view(), name='glamping-list'),
+    path('crear-reserva/', views.crear_reserva, name='crear_reserva'),
+
 ] 
 
 if settings.DEBUG:

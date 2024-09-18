@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en" className="bg-neutral">
       <body className={inter.className} >
         <div><NavBar></NavBar></div>
-        <div className="pt-20 bg-neutral">{children}</div>
+        <div className="pt-20 bg-neutral px-10">{children}</div>
         <div><Footer></Footer></div>        
         </body>        
     </html>

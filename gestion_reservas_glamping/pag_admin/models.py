@@ -23,7 +23,7 @@ class GlampingImagePath:
 class Glamping(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.TextField(max_length=100)
-    descripcion = models.TextField(max_length=100)
+    descripcion = models.TextField()
     ubicacion = models.CharField(max_length=255)
     imagen1 = models.ImageField(upload_to=GlampingImagePath())
     imagen2 = models.ImageField(upload_to=GlampingImagePath(), blank=True)
@@ -33,19 +33,17 @@ class Glamping(models.Model):
     imagen6 = models.ImageField(upload_to=GlampingImagePath(), blank=True)
 
     def clean(self):
-        # Definir la ruta de la carpeta que se va a crear
-        folder_path = os.path.join('media', self.nombre)
-        
-        # Verificar si la carpeta ya existe
-        if os.path.exists(folder_path):
-            raise ValidationError(f'Ya existe un glamping con el nombre "{self.nombre}". Elige otro nombre.')
+        # Solo realizar la verificación si es una creación (no actualización)
+        if not self.pk:  # Si no hay primary key, es una creación
+            folder_path = os.path.join('media', self.nombre)
+            
+            # Verificar si la carpeta ya existe
+            if os.path.exists(folder_path):
+                raise ValidationError(f'Ya existe un glamping con el nombre "{self.nombre}". Elige otro nombre.')
 
-
-    
 
 class Reserva(models.Model):
     id = models.AutoField(primary_key=True)
-    cliente_id = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     glamping_id = models.ForeignKey(Glamping, on_delete=models.CASCADE)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
