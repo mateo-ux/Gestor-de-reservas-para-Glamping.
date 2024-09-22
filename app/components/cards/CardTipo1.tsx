@@ -8,13 +8,15 @@ interface CardTipo1Props {
   titulo: string;
   contenido: string;
   imagenes: (string | null)[];
+  id: number;
 }
 
-const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes }) => {
+const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes, id }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mostrarReserva, setMostrarReserva] = useState(false); // Estado para controlar si se muestra el componente de reserva
   const carouselRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null); // Referencia para el modal
+  
 
   // Función para cambiar la imagen en el carrusel
   const slideToNextImage = () => {
@@ -105,7 +107,8 @@ const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes }) =>
       {/* Mostrar el componente de reserva si el estado está en true */}
       {mostrarReserva && (        
           <div ref={modalRef} className="w-full px-8">
-            <ReservationCalendar />
+            <ReservationCalendar 
+              id={id}/>
           </div>       
       )}
     </div>

@@ -10,9 +10,7 @@ export default function Home() {
           <title>proyecto1</title>
           <meta name="descripcion" content="generalidades de la app"/>
           <link rel="stylesheet" href="/favicon.ico" />
-        </Head>
-
-        
+        </Head>        
       </div>
     </main>
   );

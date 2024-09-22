@@ -1,16 +1,19 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
-from pag_admin.forms import CrearGlampingForm
-from .serializers import GlampingSerializer
-from rest_framework import generics
-import shutil
-import os
-from django.conf import settings
 from rest_framework.decorators import api_view
+from pag_admin.forms import CrearGlampingForm
 from rest_framework.response import Response
-from rest_framework import status
+from .serializers import GlampingSerializer
 from .serializers import ReservaSerializer
 from .models import Glamping, Reserva
+from rest_framework import generics
+from django.conf import settings
+from rest_framework import status
+import shutil
+import os
+from datetime import timedelta
+from .serializers import FechasOcupadasSerializer
+from datetime import datetime
 
 # Verificar si el usuario es superusuario
 def is_superuser(user):
@@ -144,8 +147,8 @@ class GlampingList(generics.ListCreateAPIView):
  ################################################################################################
  
 
-
-
+from django.db import IntegrityError, DatabaseError
+from django.db.models import Q
 
 @api_view(['POST'])
 def crear_reserva(request):
@@ -158,11 +161,25 @@ def crear_reserva(request):
     if not all([glamping_id, fecha_inicio, fecha_fin]):
         return Response({'error': 'Datos incompletos'}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Verificar que la fecha de inicio es anterior a la fecha de fin
+    if fecha_inicio >= fecha_fin:
+        return Response({'error': 'La fecha de entrada debe ser anterior a la fecha de salida'}, status=status.HTTP_400_BAD_REQUEST)
+
     # Obtener el glamping
     try:
-        glamping = Glamping.objects.get(id=glamping_id) # pylint: disable=E1101
-    except Glamping.DoesNotExist: # pylint: disable=E1101
+        glamping = Glamping.objects.get(id=glamping_id)  # pylint: disable=E1101
+    except Glamping.DoesNotExist:  # pylint: disable=E1101
         return Response({'error': 'Glamping no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Verificar si las fechas nuevas solapan con alguna reserva existente para este glamping
+    reservas_existentes = Reserva.objects.filter(  # pylint: disable=E1101
+        glamping_id=glamping
+    ).filter(
+        Q(fecha_inicio__lte=fecha_fin) & Q(fecha_fin__gte=fecha_inicio)
+    )
+
+    if reservas_existentes.exists():
+        return Response({'error': 'Ya existe una reserva en el rango de fechas seleccionado.'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Crear y guardar la reserva
     reserva = Reserva(
@@ -173,8 +190,87 @@ def crear_reserva(request):
 
     try:
         reserva.save()
-    except Exception as e:
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    except IntegrityError as e:
+        return Response({'error': 'Error de integridad: ' + str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    except DatabaseError as e:
+        return Response({'error': 'Error de base de datos: ' + str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     serializer = ReservaSerializer(reserva)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(['GET'])
+def fechas_ocupadas(request):
+    glamping_id = request.GET.get('glamping_id')
+    
+    # Obtener las reservas asociadas a este glamping
+    reservas = Reserva.objects.filter(glamping_id=glamping_id) # pylint: disable=E1101
+
+    # Crear una lista de fechas ocupadas
+    lista_fechas_ocupadas = []
+
+    for reserva in reservas:
+        fecha_inicial = reserva.fecha_inicio
+        fecha_final = reserva.fecha_fin
+        current_date = fecha_inicial
+
+        while current_date <= fecha_final:
+            lista_fechas_ocupadas.append(current_date.strftime('%Y-%m-%d'))
+            current_date += timedelta(days=1)  # Mover al siguiente día
+
+    # Serializar la lista de fechas ocupadas
+    serializer = FechasOcupadasSerializer(data={'fechas_ocupadas': lista_fechas_ocupadas})
+    
+    if serializer.is_valid():
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=400)
+    
+@api_view(['GET'])
+def todas_fechas_ocupadas(request):
+    glamping_id = request.GET.get('glamping_id')
+    check_in = request.GET.get('checkIn')
+    check_out = request.GET.get('checkOut')
+
+    # Convertir fechas de string a objeto datetime
+    try:
+        check_in_date = datetime.strptime(check_in, '%Y-%m-%d').date()
+        check_out_date = datetime.strptime(check_out, '%Y-%m-%d').date()
+    except (TypeError, ValueError):
+        return Response({"error": "Fechas inválidas"}, status=400)
+
+    # Filtrar por fechas y glamping_id (si está presente)
+    if glamping_id:
+        reservas = Reserva.objects.filter( # pylint: disable=E1101
+            glamping_id=glamping_id,
+            fecha_inicio__lte=check_out_date,
+            fecha_fin__gte=check_in_date
+        )
+    else:
+        reservas = Reserva.objects.filter( # pylint: disable=E1101
+            fecha_inicio__lte=check_out_date,
+            fecha_fin__gte=check_in_date
+        )
+
+    # Obtener todas las fechas ocupadas
+    fechas_ocupadass = []
+    for reserva in reservas:
+        rango = [reserva.fecha_inicio + timedelta(days=x) for x in range((reserva.fecha_fin - reserva.fecha_inicio).days + 1)]
+        fechas_ocupadass.extend(rango)
+
+    # Convertir a string
+    fechas_ocupadas_str = [fecha.strftime('%Y-%m-%d') for fecha in fechas_ocupadass]
+
+    # Filtrar glampings disponibles
+    glampings_disponibles = Glamping.objects.exclude( # pylint: disable=E1101
+        reserva__fecha_inicio__lte=check_out_date,
+        reserva__fecha_fin__gte=check_in_date
+    ).values_list('id', flat=True)
+
+    return Response({
+        "fechas_ocupadass": fechas_ocupadas_str,
+        "glampings_disponibles": list(glampings_disponibles)
+    })
+
+class GlampingDetail(generics.RetrieveAPIView):
+    queryset = Glamping.objects.all() # pylint: disable=E1101
+    serializer_class = GlampingSerializer

@@ -12,3 +12,21 @@ class ReservaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reserva
         fields = ['id', 'glamping_id', 'fecha_inicio', 'fecha_fin']
+        
+
+class FechasOcupadasSerializer(serializers.Serializer):
+    """
+    Serializador para las fechas ocupadas de un glamping.
+    """
+    fechas_ocupadas = serializers.ListField(child=serializers.DateField(format='%Y-%m-%d'))
+
+    def create(self, validated_data):
+        # No se implementa lógica de creación
+        pass
+
+    def update(self, instance, validated_data):
+        # No se implementa lógica de actualización
+        pass
+
+
+

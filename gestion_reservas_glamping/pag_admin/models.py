@@ -47,3 +47,11 @@ class Reserva(models.Model):
     glamping_id = models.ForeignKey(Glamping, on_delete=models.CASCADE)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
+
+    def __str__(self):
+        return f'Reserva {self.id} - {self.glamping_id}'
+
+    def clean(self):
+        if self.fecha_fin < self.fecha_inicio:
+            raise ValidationError("La fecha de fin no puede ser anterior a la fecha de inicio.")
+    

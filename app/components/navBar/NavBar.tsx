@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import './StyleNavBar.css';
 import Image from 'next/image';
+import Link from 'next/link';
 
 
 export const NavBar = () => {
@@ -54,10 +55,15 @@ export const NavBar = () => {
               absolute transform translate-x-0 shadow scroll-mt-12"
             >
               <ul className="menu space-x-4">
-                <li><a className="text-lg hover:bg-neutral">Inicio</a></li>
-                <li><a className="text-lg hover:bg-neutral">Reserva con nosotros</a></li>
-                <li><a className="text-lg hover:bg-neutral">Como llegar</a></li>
-                <li><a className="text-lg hover:bg-neutral">Contáctanos</a></li>
+                <li>
+                  <Link href= "inicio" className="text-lg hover:bg-neutral">Inicio</Link>
+                </li>
+                <li>
+                  <Link href= "ReservaConNosotros" className="text-lg hover:bg-neutral">Reserva con nosotros</Link></li>
+                <li>
+                  <Link href= "ReservaConNosotros" className="text-lg hover:bg-neutral">Como llegar</Link></li>
+                <li>
+                  <Link href= "ReservaConNosotros" className="text-lg hover:bg-neutral">Contactanos</Link></li>
                 <li>
                   <span className="[&>svg]:h-7 [&>svg]:w-7 [&>svg]:fill-[#128c7e]">
                     <svg
@@ -80,16 +86,16 @@ export const NavBar = () => {
         <div className="hidden custom:flex space-x-4">
   <ul className="menu menu-horizontal p-0 space-x-4">
     <li>
-      <a className="text-xl hover:bg-neutral">Inicio</a>
+    <Link href= "inicio" className="text-lg hover:bg-neutral">Inicio</Link>
     </li>
     <li>
-      <a className="text-xl hover:bg-neutral">Reserva con nosotros</a>
+      <Link href= "ReservaConNosotros" className="text-lg hover:bg-neutral">Reserva con nosotros</Link>
     </li>
     <li>
-      <a className="text-xl hover:bg-neutral">Cómo llegar</a>
+    <Link href= "ReservaConNosotros" className="text-lg hover:bg-neutral">Como llegar</Link>
     </li>
     <li>
-      <a className="text-xl hover:bg-neutral">Contáctanos</a>
+    <Link href= "ReservaConNosotros" className="text-lg hover:bg-neutral">Contactanos</Link>
     </li>
   </ul>
 </div>
