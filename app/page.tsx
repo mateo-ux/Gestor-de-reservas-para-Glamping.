@@ -1,6 +1,8 @@
+'use client'
 import Image from "next/image";
 import Head from "next/head";
 import Footer from "./components/footer/Footer";
+
 
 export default function Home() {
   return (
@@ -8,9 +10,12 @@ export default function Home() {
       <div>
         <Head>
           <title>proyecto1</title>
-          <meta name="descripcion" content="generalidades de la app"/>
+          <meta name="mobile-web-app-capable" content="yes"/>
           <link rel="stylesheet" href="/favicon.ico" />
         </Head>        
+      </div>
+      <div>
+
       </div>
     </main>
   );

@@ -5,6 +5,7 @@ from django.utils.deconstruct import deconstructible
 from django.core.exceptions import ValidationError
 
 
+
 class Cliente(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -24,7 +25,7 @@ class Glamping(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.TextField(max_length=100)
     descripcion = models.TextField()
-    ubicacion = models.CharField(max_length=255)
+    precio = models.IntegerField()
     imagen1 = models.ImageField(upload_to=GlampingImagePath())
     imagen2 = models.ImageField(upload_to=GlampingImagePath(), blank=True)
     imagen3 = models.ImageField(upload_to=GlampingImagePath(), blank=True)
@@ -54,4 +55,4 @@ class Reserva(models.Model):
     def clean(self):
         if self.fecha_fin < self.fecha_inicio:
             raise ValidationError("La fecha de fin no puede ser anterior a la fecha de inicio.")
-    
+

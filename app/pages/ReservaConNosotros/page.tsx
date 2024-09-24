@@ -7,7 +7,7 @@ interface Glamping {
   id: number;
   nombre: string;
   descripcion: string;
-  ubicacion: string;
+  precio: string;
   imagen1?: string;
   imagen2?: string;
   imagen3?: string;
@@ -54,12 +54,14 @@ const Page = async () => {
                 className={`transform ${alignment} w-full sm:w-11/12 lg:w-3/4 xl:w-full`}
               >
                 <CardTipo1
-                  titulo={glamping.nombre}
+                  nombre={glamping.nombre}
                   contenido={glamping.descripcion}
                   imagenes={imagenes.length > 0 ? imagenes : ['/images/default-image.png']}
-                  id={glamping.id}
-                />
+                  id={glamping.id} 
+                  precio={glamping.precio}                />
+                  
               </div>
+              
             );
           })}
         </div>

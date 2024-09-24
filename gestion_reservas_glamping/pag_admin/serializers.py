@@ -29,4 +29,3 @@ class FechasOcupadasSerializer(serializers.Serializer):
         pass
 
 
-

@@ -5,10 +5,12 @@ import FormularioReserva from '../cards/FormularioReserva';
 
 interface GlampingProps {
   id: number;
+  precio: string;
+  nombre: string;
   
 }
 
-const ReservationCalendar: React.FC<GlampingProps> = ({ id }) => {
+const ReservationCalendar: React.FC<GlampingProps> = ({ id, precio, nombre}) => {
   const [checkInDate, setCheckInDate] = useState<string | undefined>(undefined);
   const [checkOutDate, setCheckOutDate] = useState<string | undefined>(undefined);
   const [fechasOcupadas, setFechasOcupadas] = useState<string[]>([]);
@@ -179,7 +181,11 @@ const ReservationCalendar: React.FC<GlampingProps> = ({ id }) => {
 
           </div>
           {mostrarMensaje && <div>
-                <FormularioReserva fecha_de_entrada={checkInDate} fecha_de_salida={checkOutDate}></FormularioReserva>
+                <FormularioReserva 
+                fecha_de_entrada={checkInDate} 
+                fecha_de_salida={checkOutDate} 
+                precio={precio}
+                nombre={nombre}/>
               </div>}
         </div>
       )}

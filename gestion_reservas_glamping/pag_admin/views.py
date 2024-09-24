@@ -1,19 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
+from django.views.decorators.csrf import csrf_exempt
+from .serializers import FechasOcupadasSerializer
 from rest_framework.decorators import api_view
 from pag_admin.forms import CrearGlampingForm
 from rest_framework.response import Response
 from .serializers import GlampingSerializer
 from .serializers import ReservaSerializer
 from .models import Glamping, Reserva
+from django.http import JsonResponse
 from rest_framework import generics
-from django.conf import settings
 from rest_framework import status
-import shutil
-import os
+from django.conf import settings
 from datetime import timedelta
-from .serializers import FechasOcupadasSerializer
 from datetime import datetime
+import hashlib
+import shutil
+import json
+import os
 
 # Verificar si el usuario es superusuario
 def is_superuser(user):
@@ -274,3 +278,50 @@ def todas_fechas_ocupadas(request):
 class GlampingDetail(generics.RetrieveAPIView):
     queryset = Glamping.objects.all() # pylint: disable=E1101
     serializer_class = GlampingSerializer
+    
+
+######################################################################
+#payu
+
+@csrf_exempt
+def create_payment(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            amount = data.get('amount')
+            currency = data.get('currency', 'COP')
+            description = data.get('description')
+            reference_code = data.get('referenceCode')
+
+            if not all([amount, description, reference_code]):
+                return JsonResponse({'error': 'Faltan datos en la solicitud'}, status=400)
+
+            signature_str = f"{settings.PAYU_API_KEY}~{settings.PAYU_MERCHANT_ID}~{reference_code}~{amount}~{currency}"
+            signature = hashlib.md5(signature_str.encode('utf-8')).hexdigest()
+
+            payment_data = {
+                "merchantId": settings.PAYU_MERCHANT_ID,
+                "accountId": settings.PAYU_ACCOUNT_ID,
+                "description": description,
+                "referenceCode": reference_code,
+                "amount": amount,
+                "currency": currency,
+                "signature": signature,
+                "test": 1 if settings.PAYU_TESTING else 0,
+                "buyerEmail": "mateosalgado555@gmail.com",
+                "responseUrl": "http://localhost:3000/pages/payment-response",
+            }
+
+            payu_url = "https://sandbox.checkout.payulatam.com/ppp-web-gateway-payu/" if settings.PAYU_TESTING else "https://checkout.payulatam.com/ppp-web-gateway-payu/"
+
+            return JsonResponse({
+                'payu_url': payu_url,
+                'payment_data': payment_data,
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'JSON inválido en la solicitud'}, status=400)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+
+

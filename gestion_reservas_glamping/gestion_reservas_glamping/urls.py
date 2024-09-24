@@ -31,6 +31,8 @@ urlpatterns = [
     path('fechas-ocupadas/', views.fechas_ocupadas, name='fechas_ocupadas'),
     path('todas_fechas-ocupadas/', views.todas_fechas_ocupadas, name='todas_fechas_ocupadas'),
     path('api/glamping/<int:pk>/', views.GlampingDetail.as_view(), name='glamping-detail'),
+    path('create-payment/', views.create_payment, name='create-payment'),
+    
 ] 
 
 if settings.DEBUG:

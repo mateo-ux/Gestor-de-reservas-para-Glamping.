@@ -5,13 +5,14 @@ import ReservationCalendar from '../calendario/ReservationCalendar';
  // Importa tu componente de reserva aquí
 
 interface CardTipo1Props {
-  titulo: string;
+  nombre: string;
   contenido: string;
+  precio: string;
   imagenes: (string | null)[];
   id: number;
 }
 
-const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes, id }) => {
+const CardTipo1: React.FC<CardTipo1Props> = ({ nombre, contenido, imagenes, id, precio }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [mostrarReserva, setMostrarReserva] = useState(false); // Estado para controlar si se muestra el componente de reserva
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -63,7 +64,7 @@ const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes, id }
     border-base-content border-4 rounded-xl p-4 flex flex-col">
       {/* Contenedor del título */}
       <div className="w-auto text-center mb-4">
-        <h1 className="card-titulo text-xl sm:text-3xl">{titulo}</h1>
+        <h1 className="card-titulo text-xl sm:text-3xl">{nombre}</h1>
       </div>
 
       {/* Contenedor de la imagen */}
@@ -78,7 +79,7 @@ const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes, id }
               <img
                 key={index}
                 src={img || '/images/default-image.png'}
-                alt={titulo}
+                alt={nombre}
                 className="rounded-xl flex-shrink-0 w-full h-auto"
                 style={{ minWidth: '100%' }}
               />
@@ -91,6 +92,7 @@ const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes, id }
           <p className="text-justify leading-relaxed whitespace-normal break-words">
             {contenido}
           </p>
+          <h1 className="card-titulo text-xl sm:text-3xl">Valor por noche: {precio}</h1>
         </div>
       </div>
 
@@ -108,7 +110,11 @@ const CardTipo1: React.FC<CardTipo1Props> = ({ titulo, contenido, imagenes, id }
       {mostrarReserva && (        
           <div ref={modalRef} className="w-full px-8">
             <ReservationCalendar 
-              id={id}/>
+            id={id} 
+            precio={precio}
+            nombre={nombre}
+            />
+           
           </div>       
       )}
     </div>

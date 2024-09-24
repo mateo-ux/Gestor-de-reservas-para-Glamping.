@@ -138,3 +138,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # Puerto de tu app Next.js
 ]
+
+API_KEY = '4Vj8eK4rloUd272L48hsrarnUA'
+MERCHANT_ID = '508029'
+REFERENCE_CODE = 'ref_123456'
+AMOUNT = '10000'
+CURRENCY = 'COP'
+
+PAYU_MERCHANT_ID = '508029'
+PAYU_ACCOUNT_ID = '512321'
+PAYU_API_KEY = '4Vj8eK4rloUd272L48hsrarnUA'
+PAYU_API_LOGIN = 'pRRXKOl8ikMmt9u'
+PAYU_TESTING = True  # Cambiar a False en producción

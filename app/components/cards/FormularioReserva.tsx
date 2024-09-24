@@ -1,11 +1,14 @@
 import React from 'react';
+import PayUButton from '../PayUButton/PayUButton';
 interface FormularioReservaProps {
   fecha_de_entrada: string | undefined;
   fecha_de_salida: string | undefined;
+  precio: string;
+  nombre: string;
   
 }
 
-const FormularioReserva: React.FC<FormularioReservaProps> = ({fecha_de_entrada, fecha_de_salida}) => {
+const FormularioReserva: React.FC<FormularioReservaProps> = ({fecha_de_entrada, fecha_de_salida, precio, nombre}) => {
   return (
     <div className="card w-full max-w-md shadow-xl border-black 
     border-2 rounded-lg p-4 m-4">
@@ -64,11 +67,12 @@ const FormularioReserva: React.FC<FormularioReservaProps> = ({fecha_de_entrada, 
           />
         </label>
         <div className="w-auto text-center mb-4">
-        <button
-          className="btn btn-outline btn-accent"
-        >
-          Ir al pago
-        </button>
+        <PayUButton 
+        fecha_de_entrada={fecha_de_entrada} 
+        fecha_de_salida={fecha_de_entrada} 
+        precio={precio}
+        nombre={nombre}
+        />
       </div>
       </div>
     </div>
